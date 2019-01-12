@@ -20,6 +20,7 @@
         <activity
             android:name=".View.UserListActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTop"
             tools:ignore="InnerclassSeparator">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -29,6 +30,8 @@
         <activity 
             android:name=".View.UserDetailsActivity"
             android:screenOrientation="portrait"
+            android:parentActivityName=".View.UserListActivity"
+            android:theme="@style/details_theme"
             tools:ignore="InnerclassSeparator" />
     </application>
 

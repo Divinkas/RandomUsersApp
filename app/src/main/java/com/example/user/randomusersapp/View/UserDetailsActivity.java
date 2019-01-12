@@ -18,10 +18,12 @@ import com.example.user.randomusersapp.R;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.Toolbar;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserDetailsActivity extends AppCompatActivity {
@@ -35,6 +37,7 @@ public class UserDetailsActivity extends AppCompatActivity {
     AppCompatEditText apc_user_mail;
     AppCompatEditText apc_user_birthday;
     Button btn_call;
+    Toolbar toolbar;
 
     @SuppressLint({"SetTextI18n", "SimpleDateFormat"})
     @Override
@@ -42,6 +45,9 @@ public class UserDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_details);
         init_view();
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.user_info);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         userItem = getIntent().getParcelableExtra(Constants.user_key);
         if (userItem != null) {
             Glide.with(this).load(userItem.picture.large).apply(Constants.options).into(cv_user_big_image);
@@ -95,5 +101,6 @@ public class UserDetailsActivity extends AppCompatActivity {
         apc_user_mail = findViewById(R.id.apc_user_mail);
         apc_user_birthday = findViewById(R.id.apc_user_birthday);
         btn_call = findViewById(R.id.btn_call);
+        toolbar = findViewById(R.id.toolbar);
     }
 }

@@ -7,7 +7,7 @@ import android.widget.ProgressBar;
 import com.example.user.randomusersapp.Model.Data.UserItem;
 import com.example.user.randomusersapp.Presenter.UsersListPresenter;
 import com.example.user.randomusersapp.R;
-import com.example.user.randomusersapp.View.Adapter.UsersAdapter;
+import com.example.user.randomusersapp.View.Adapter.UserAdapter;
 import com.example.user.randomusersapp.View.Contract.UserListContract;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class UserListActivity extends AppCompatActivity implements UserListContract {
     private UsersListPresenter presenter;
-    private UsersAdapter adapter;
+    private UserAdapter adapter;
     private boolean isLoading = false;
 
     public RecyclerView rv_list_users;
@@ -32,19 +32,21 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
-        rv_list_users = findViewById(R.id.rv_list_users);
-        progressBar = findViewById(R.id.pb_load_list);
-        presenter = new UsersListPresenter(this, this);
-        adapter = new UsersAdapter(this, new ArrayList<>(), presenter);
-        rv_list_users.setLayoutManager(new LinearLayoutManager(this));
-        rv_list_users.setAdapter(adapter);
-        set_listeners();
-        presenter.load_data();
+        if(savedInstanceState == null){
+            rv_list_users = findViewById(R.id.rv_list_users);
+            progressBar = findViewById(R.id.pb_load_list);
+            presenter = new UsersListPresenter(this, this);
+            adapter = new UserAdapter(R.layout.item_load_more, this, new ArrayList<>());
+            rv_list_users.setLayoutManager(new LinearLayoutManager(this));
+            rv_list_users.setAdapter(adapter);
+            set_listeners();
+            presenter.load_data();
+        }
     }
-
 
     @Override
     public void set_list(List<UserItem> list) {
+        adapter.stop_load_more();
         adapter.add_list(list);
         isLoading = false;
     }
@@ -54,16 +56,15 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
                 LinearLayoutManager layoutManager =((LinearLayoutManager)Objects.requireNonNull(recyclerView.getLayoutManager()));
                 int visibleItemCount = layoutManager.getChildCount();
                 int totalItemCount = layoutManager.getItemCount();
                 int firstVisibleItems = layoutManager.findFirstVisibleItemPosition();
-
                 if (!isLoading) {
                     if ( (visibleItemCount+firstVisibleItems) >= totalItemCount) {
                         isLoading = true;
                         presenter.next_load();
+                        adapter.start_load_more();
                     }
                 }
             }
