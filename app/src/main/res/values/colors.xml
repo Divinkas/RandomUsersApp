@@ -9,4 +9,6 @@
     <color name="col_dark">#202020</color>
     <color name="col_gray">#a1a1a1</color>
 
+    <color name="col_bg_btn">#F9AA33</color>
+
 </resources>

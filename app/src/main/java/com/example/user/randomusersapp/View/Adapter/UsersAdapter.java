@@ -40,9 +40,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
         Glide.with(context).load(list.get(position).picture.medium).apply(Constants.options).into(holder.user_image);
         holder.tv_user_full_name.setText(list.get(position).name.first + " " + list.get(position).name.last);
         holder.ll_container.setOnClickListener(v -> {
-            UserItem clicked_item = list.get(position);
             Intent intent = new Intent(context, UserDetailsActivity.class);
-            intent.putExtra(Constants.user_key, clicked_item);
+            intent.putExtra(Constants.user_key, list.get(position));
             context.startActivity(intent);
         });
     }
@@ -69,7 +68,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
         TextView tv_user_full_name;
         CircleImageView user_image;
 
-        public UsersViewHolder(@NonNull View itemView) {
+        UsersViewHolder(@NonNull View itemView) {
             super(itemView);
             tv_user_full_name = itemView.findViewById(R.id.tv_user_full_name);
             user_image = itemView.findViewById(R.id.cv_user_image);
