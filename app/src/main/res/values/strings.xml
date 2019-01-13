@@ -5,4 +5,5 @@
     <string name="mail">Email</string>
     <string name="other_info">Other info</string>
     <string name="call">Call</string>
+    <string name="list_grid">list/grid</string>
 </resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/change_list_style_action"
+        android:title="@string/list_grid"
+        android:icon="@drawable/view_sequential"
+        app:showAsAction="always"/>
+</menu>
