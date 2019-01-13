@@ -1,18 +1,27 @@
 package com.example.user.randomusersapp.Presenter;
 
 import android.content.Context;
+import android.widget.Toast;
 
-import com.example.user.randomusersapp.Model.Callback.UserCallback;
 import com.example.user.randomusersapp.Model.Data.UserItem;
+import com.example.user.randomusersapp.Model.Data.UsersListResponse;
 import com.example.user.randomusersapp.Model.NetworkModel;
 import com.example.user.randomusersapp.View.Contract.UserListContract;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class UsersListPresenter implements UserCallback {
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
+
+public class UsersListPresenter {
     private Context context;
     private NetworkModel networkModel;
     private UserListContract contract;
+
+    private Disposable users_disposable = null;
 
     public UsersListPresenter(Context context, UserListContract contract){
         this.context = context;
@@ -21,17 +30,25 @@ public class UsersListPresenter implements UserCallback {
     }
 
     public void load_data(){
-        contract.show_loading();
-        networkModel.load_random_users(this);
+        users_disposable = networkModel
+                .get_users()
+                .map((Function<UsersListResponse, List<UserItem>>)
+                        usersListResponse -> usersListResponse == null ? new ArrayList<>() : usersListResponse.getResults())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(userItems -> {
+                    contract.hide_loading();
+                    contract.set_list(userItems);
+                }, throwable -> Toast.makeText(context, "Ошибка загрузки данных!", Toast.LENGTH_SHORT).show());
     }
 
     public void next_load(){
-        networkModel.load_random_users(this);
+        load_data();
     }
 
-    @Override
-    public void load_user_list(List<UserItem> user_list) {
-        contract.hide_loading();
-        contract.set_list(user_list);
+    public void un_subscribe(){
+        if(users_disposable!= null) {
+            users_disposable.dispose();
+        }
     }
 }

@@ -28,7 +28,6 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
     private UsersListPresenter presenter;
     private UserAdapter adapter;
     private boolean isLoading = false;
-    private boolean isLinear = false;
 
     private SwipeRefreshLayout refreshLayout;
     public RecyclerView rv_list_users;
@@ -50,9 +49,9 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
             presenter = new UsersListPresenter(this, this);
             adapter = new UserAdapter(R.layout.item_load_more, this, new ArrayList<>());
             rv_list_users.setLayoutManager(gridLayoutManager);
-            isLinear = false;
             rv_list_users.setAdapter(adapter);
             set_listeners();
+            show_loading();
             presenter.load_data();
         }
     }
@@ -78,9 +77,9 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
 
     @Override
     public void set_list(List<UserItem> list) {
+        isLoading = false;
         adapter.stop_load_more();
         adapter.add_list(list);
-        isLoading = false;
     }
 
     @Override
@@ -94,7 +93,7 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
     }
 
     private void check_icons() {
-        if (!isLinear) {
+        if (!getIsGridLayoutManager()) {
             menu.findItem(R.id.change_list_style_action).setIcon(R.drawable.view_sequential);
         } else {
             menu.findItem(R.id.change_list_style_action).setIcon(R.drawable.view_grid);
@@ -106,16 +105,12 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
     }
 
     private void toggleLayoutManager() {
-        int visible_position = ((LinearLayoutManager) Objects
-                .requireNonNull(rv_list_users.getLayoutManager())).findFirstVisibleItemPosition();
+        int visible_position = ((LinearLayoutManager) Objects.requireNonNull(rv_list_users.getLayoutManager())).findFirstVisibleItemPosition();
         if (getIsGridLayoutManager()) {
             rv_list_users.setLayoutManager(linearLayoutManager);
-            isLinear = true;
         } else {
             rv_list_users.setLayoutManager(gridLayoutManager);
-            isLinear = false;
         }
-
         rv_list_users.getLayoutManager().scrollToPosition(visible_position);
     }
 
@@ -152,5 +147,11 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
             presenter.load_data();
             refreshLayout.setRefreshing(false);
         });
+    }
+
+    @Override
+    protected void onStop() {
+        presenter.un_subscribe();
+        super.onStop();
     }
 }

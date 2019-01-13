@@ -23,20 +23,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserAdapter extends LoadMoreAdapter<UserItem> {
     private final int TYPE_PROGRESS = 100;
-    private boolean isShowProgress = false;
 
     public UserAdapter(int linkLayoutProgress, Context context, List<UserItem> list) {
         super(linkLayoutProgress, context, list);
-    }
-
-    public void start_load_more() {
-        isShowProgress = true;
-        notifyDataSetChanged();
-    }
-
-    public void stop_load_more() {
-        isShowProgress = false;
-        notifyDataSetChanged();
     }
 
     @NonNull
@@ -70,16 +59,6 @@ public class UserAdapter extends LoadMoreAdapter<UserItem> {
         } else {
             super.onBindViewHolder(holder, position);
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        if (isShowProgress) { return list.size() + 1; }
-        return list.size();
-    }
-
-    public boolean isBottomProgressPosition(int position) {
-        return position == list.size() && isShowProgress;
     }
 
     class UsersViewHolder extends BaseViewHolder {

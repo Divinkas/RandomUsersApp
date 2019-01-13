@@ -12,10 +12,32 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class LoadMoreAdapter<T> extends BaseAdapter<T> {
     private final int progressLayoutResId;
+    protected boolean isShowProgress = false;
 
     public LoadMoreAdapter(int linkLayoutProgress, Context context, List<T> list){
         super(list, context);
         progressLayoutResId = linkLayoutProgress;
+    }
+
+    public void start_load_more() {
+        isShowProgress = true;
+        notifyDataSetChanged();
+    }
+
+    public void stop_load_more() {
+        isShowProgress = false;
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public int getItemCount() {
+        if (isShowProgress) { return list.size() + 1; }
+        return list.size();
+    }
+
+
+    public boolean isBottomProgressPosition(int position) {
+        return position == list.size() && isShowProgress;
     }
 
     @Override
