@@ -21,6 +21,10 @@ allprojects {
         jcenter()
     }
 }
+ext{
+    androidxItemVersion = '1.0.0'
+    retrofitLibraryVersion = '2.3.0'
+}
 
 task clean(type: Delete) {
     delete rootProject.buildDir

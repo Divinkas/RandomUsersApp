@@ -21,20 +21,39 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class UserAdapter extends LoadMoreAdapter<UserItem> {
+public class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int TYPE_PROGRESS = 100;
+    private final int progressLayoutResId;
+    private boolean isShowProgress = false;
+
+    private Context context;
+    private List<UserItem> list;
+
 
     public UserAdapter(int linkLayoutProgress, Context context, List<UserItem> list) {
-        super(linkLayoutProgress, context, list);
+        progressLayoutResId = linkLayoutProgress;
+        this.context = context;
+        this.list = list;
+    }
+
+    @Override
+    public int getItemCount() {
+        if(isShowProgress) return list.size()+1;
+        return list.size();
     }
 
     @NonNull
     @Override
-    public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view;
         if (isShowProgress && viewType == TYPE_PROGRESS) {
-            return super.onCreateViewHolder(parent, viewType);
-        } else
-            return new UsersViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.item_user, parent, false));
+            view = LayoutInflater.from(context).inflate(progressLayoutResId, parent, false);
+            return new LoadMoreViewHolder(view);
+
+        } else{
+            view = LayoutInflater.from(context).inflate(R.layout.item_user, parent, false);
+            return new UsersViewHolder(view);
+        }
     }
 
     @Override
@@ -48,29 +67,69 @@ public class UserAdapter extends LoadMoreAdapter<UserItem> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof UsersViewHolder) {
-            UsersViewHolder user_holder = ((UsersViewHolder) holder);
-            Glide.with(getContext()).load(list.get(position).picture.medium).apply(Constants.options).into(user_holder.user_image);
-            user_holder.tv_user_full_name.setText(list.get(position).name.first + " " + list.get(position).name.last);
-            user_holder.ll_container.setOnClickListener(v -> {
-                Intent intent = new Intent(getContext(), UserDetailsActivity.class);
-                intent.putExtra(Constants.user_key, list.get(position));
-                getContext().startActivity(intent);
+            UsersViewHolder contactHolder = ((UsersViewHolder) holder);
+            Glide
+                    .with(context)
+                    .load(list.get(position).picture.medium)
+                    .apply(Constants.GLIDE_OPTIONS)
+                    .into(contactHolder.circleImageViewContactImage);
+
+            contactHolder.textViewContactFullName
+                    .setText(list.get(position).name.first + " " + list.get(position).name.last);
+
+            contactHolder.linearLayoutContainer.setOnClickListener(v -> {
+                Intent intent = new Intent(context, UserDetailsActivity.class);
+                intent.putExtra(Constants.USER_KEY, list.get(position));
+                context.startActivity(intent);
             });
-        } else {
-            super.onBindViewHolder(holder, position);
+        }
+        if(holder instanceof LoadMoreViewHolder){
+            ((LoadMoreViewHolder)holder).view.setVisibility(View.VISIBLE);
         }
     }
 
-    class UsersViewHolder extends BaseViewHolder {
-        LinearLayout ll_container;
-        TextView tv_user_full_name;
-        CircleImageView user_image;
+    public boolean isBottomProgressPosition(int position) {
+        return position == list.size() && isShowProgress;
+    }
+
+    public void startLoadMore(){
+        isShowProgress = true;
+        notifyDataSetChanged();
+    }
+
+    public void stopLoadMore(){
+        isShowProgress = false;
+        notifyDataSetChanged();
+    }
+
+    public void addList(List<UserItem> newList){
+        list.addAll(newList);
+        notifyDataSetChanged();
+    }
+    public void clearData(){
+        list.clear();
+        notifyDataSetChanged();
+    }
+
+    class UsersViewHolder extends RecyclerView.ViewHolder {
+        LinearLayout linearLayoutContainer;
+        TextView textViewContactFullName;
+        CircleImageView circleImageViewContactImage;
 
         UsersViewHolder(@NonNull View itemView) {
             super(itemView);
-            tv_user_full_name = itemView.findViewById(R.id.tv_user_full_name);
-            user_image = itemView.findViewById(R.id.cv_user_image);
-            ll_container = itemView.findViewById(R.id.ll_user_container);
+            textViewContactFullName = itemView.findViewById(R.id.tv_user_full_name);
+            circleImageViewContactImage = itemView.findViewById(R.id.cv_user_image);
+            linearLayoutContainer = itemView.findViewById(R.id.ll_user_container);
         }
     }
+
+    class LoadMoreViewHolder extends RecyclerView.ViewHolder {
+        View view;
+        LoadMoreViewHolder(@NonNull View itemView) {
+            super(itemView);
+            view = itemView;
+        }
+    }
+
 }

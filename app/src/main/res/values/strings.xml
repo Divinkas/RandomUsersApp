@@ -1,9 +1,11 @@
 <resources>
-    <string name="app_name">RandomUsersApp</string>
+    <string name="app_name">Random Contacts</string>
     <string name="user_info">User Info</string>
     <string name="cell_phone">Cell Phone</string>
     <string name="mail">Email</string>
     <string name="other_info">Other info</string>
     <string name="call">Call</string>
     <string name="list_grid">list/grid</string>
+    <string name="no_internet_connection">No internet connection!</string>
+    <string name="restart_activity">restart</string>
 </resources>

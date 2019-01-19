@@ -15,9 +15,9 @@ public class NetworkModel {
         iserverSender = retrofit.create(IserverSender.class);
     }
 
-    public Observable<UsersListResponse> get_users(){
+    public Observable<UsersListResponse> getUsers(){
         return iserverSender.load_random_users(
-                Constants.count_users_loaded,
-                Constants.inc_parametr_list);
+                Constants.COUNT_RANDOM_CONTACTS,
+                Constants.INC_LIST_PARAM);
     }
 }

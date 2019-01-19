@@ -14,7 +14,4 @@ public class UsersListResponse {
         return results;
     }
 
-    public void setResults(List<UserItem> results) {
-        this.results = results;
-    }
 }

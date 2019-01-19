@@ -12,7 +12,7 @@ import retrofit2.http.Query;
 
 public interface IserverSender {
     @GET("api")
-    Observable<UsersListResponse> load_random_users(@Query(Constants.result_parametr) int result,
-                                                    @Query(Constants.inc_parametr) String inc);
+    Observable<UsersListResponse> load_random_users(@Query(Constants.RESULT_PARAM) int result,
+                                                    @Query(Constants.ICN_PARAM) String inc);
 
 }
